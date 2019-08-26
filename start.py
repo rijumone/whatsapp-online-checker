@@ -35,15 +35,28 @@ def main():
         time.sleep(10)
 
         driver.execute_script('console.log(1)')
-        driver.find_element_by_css_selector('input').click()
+        # driver.find_element_by_css_selector('input').click()
         # keep hitting TAB until cursor is inside search box
         # while not is_search_active(driver):
         #     time.sleep(1)
         #     driver.find_element_by_tag_name('body').send_keys(Keys.TAB)
 
         # populate text field
-        driver.find_element_by_tag_name('body').send_keys("Riju")
+        # driver.find_element_by_tag_name('body').send_keys("Riju")
+        driver.find_element_by_css_selector('input').send_keys('Tillithon')
 
+        # clearing search
+        # driver.find_element_by_css_selector('div#side button').click()
+        
+        # selecting the first search result
+        driver.find_element_by_css_selector('span[title="Tillithon"]').click()
+
+        # reading info
+        lst = driver.find_elements_by_css_selector('div#main span')
+        for _ in lst:
+            _.get_attribute('title')
+
+            
         input()
         # 'Get notified of new messages\nTurn on desktop notifications »'
 
