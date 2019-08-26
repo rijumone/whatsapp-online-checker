@@ -3,6 +3,7 @@ import time
 import pytesseract
 from PIL import Image, ImageOps
 
+from models import *
 from selenium import webdriver  
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys  
@@ -25,36 +26,47 @@ def main():
         # launch whatsapp web
         driver.get("https://web.whatsapp.com")
 
-        print('waiting for authentication')
+        print('waiting for authentication, hit ENTER when ready')
         input()
 
         # set display size
         driver.set_window_size(1024, 768)
 
-        print('sleeping for 10 seconds, wait for the "enable notifications" screen to appear')
-        time.sleep(10)
+        # print('sleeping for 10 seconds, wait for the "enable notifications" screen to appear')
+        # time.sleep(10)
 
-        driver.execute_script('console.log(1)')
-        # driver.find_element_by_css_selector('input').click()
+        # driver.execute_script('console.log(1)')
         # keep hitting TAB until cursor is inside search box
         # while not is_search_active(driver):
         #     time.sleep(1)
         #     driver.find_element_by_tag_name('body').send_keys(Keys.TAB)
 
-        # populate text field
-        # driver.find_element_by_tag_name('body').send_keys("Riju")
-        driver.find_element_by_css_selector('input').send_keys('Tillithon')
+        time.sleep(2)
+        while True:
+            # fetch contacts from db to monitor
+            for contact in _fetch_contacts():
+                print(contact.name)
 
-        # clearing search
-        # driver.find_element_by_css_selector('div#side button').click()
-        
-        # selecting the first search result
-        driver.find_element_by_css_selector('span[title="Tillithon"]').click()
+                # populate text field
+                # driver.find_element_by_tag_name('body').send_keys("Riju")
+                driver.find_element_by_css_selector('input').send_keys(contact.name)
 
-        # reading info
-        lst = driver.find_elements_by_css_selector('div#main span')
-        for _ in lst:
-            _.get_attribute('title')
+                print('waiting for search results to load')
+                time.sleep(2)
+                # selecting the first search result
+                driver.find_element_by_css_selector('span[title="{}"]'.format(contact.name)).click()
+                print('waiting for contact details to load')
+                time.sleep(3)
+                # reading info
+                lst = driver.find_elements_by_css_selector('div#main span')
+                for _ in lst:
+                    status_txt = _.get_attribute('title')
+                    if status_txt != '':
+                        print(status_txt)
+                
+                # clearing search
+                driver.find_element_by_css_selector('div#side button').click()
+                
 
             
         input()
@@ -86,6 +98,13 @@ def is_search_active(driver):
             return False
 
     return True
+
+def _fetch_contacts():
+    session = get_session()
+    try:
+        return session.query(Contacts).all()
+    finally:
+        session.close()
 
 if __name__ == '__main__':
     main()
