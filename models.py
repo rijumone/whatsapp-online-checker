@@ -53,7 +53,7 @@ class History(Base):
     id = Column(Integer, primary_key=True)
     status = Column(String())
     contact_id = Column(Integer)
-    timestamp = Column(DateTime())
+    timestamp = Column(DateTime(), nullable=True)
     
     def __repr__(self):
         return "<History(id={id}, status={status}, contact_id={contact_id}, timestamp={timestamp})>".format(
