@@ -39,11 +39,13 @@ class Contacts(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String())
+    is_active = Column(Boolean())
     
     def __repr__(self):
-        return "<Contacts(id={id}, name={name})>".format(
+        return "<Contacts(id={id}, name={name}, is_active={is_active})>".format(
             id=self.id,
-            name=self.name
+            name=self.name,
+            is_active=self.is_active,
             )
 
 class History(Base):

@@ -65,8 +65,8 @@ def main():
                     continue
 
                 # driver.find_element_by_css_selector('span[title="{}"]'.format(contact.name)).click()
-                print('waiting for contact details to load: 3 + 0 seconds')
-                time.sleep(3)
+                print('waiting for contact details to load: 4 + 0 seconds')
+                time.sleep(4)
                 # reading info
                 lst = driver.find_elements_by_css_selector('div#main span')
                 for _ in lst:
@@ -128,7 +128,7 @@ def _save_status(c_id, status):
 def _fetch_contacts():
     session = get_session()
     try:
-        return session.query(Contacts).all()
+        return session.query(Contacts).filter(Contacts.is_active==True).all()
     finally:
         session.close()
 
