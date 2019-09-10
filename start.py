@@ -33,15 +33,6 @@ def main():
         # set display size
         driver.set_window_size(1024, 768)
 
-        # print('sleeping for 10 seconds, wait for the "enable notifications" screen to appear')
-        # time.sleep(10)
-
-        # driver.execute_script('console.log(1)')
-        # keep hitting TAB until cursor is inside search box
-        # while not is_search_active(driver):
-        #     time.sleep(1)
-        #     driver.find_element_by_tag_name('body').send_keys(Keys.TAB)
-
         time.sleep(2)
         while True:
             # fetch contacts from db to monitor
@@ -52,8 +43,9 @@ def main():
                 # driver.find_element_by_tag_name('body').send_keys("Riju")
                 driver.find_element_by_css_selector('input').send_keys(contact.name)
 
-                print('waiting for search results to load: 2 + 10 seconds')
-                time.sleep(2)
+                wait_time = _get_wait_by_name(name='search_results_wait')
+                print('waiting for search results to load: {} + 10 seconds'.format(wait_time))
+                time.sleep(wait_time)
                 # selecting the first search result
                 try:
                     WebDriverWait(driver, 10).until(
@@ -64,9 +56,9 @@ def main():
                     print(e)
                     continue
 
-                # driver.find_element_by_css_selector('span[title="{}"]'.format(contact.name)).click()
-                print('waiting for contact details to load: 4 + 0 seconds')
-                time.sleep(4)
+                wait_time = _get_wait_by_name(name='contact_details_wait')
+                print('waiting for contact details to load: {} + 0 seconds'.format(wait_time))
+                time.sleep(wait_time)
                 # reading info
                 lst = driver.find_elements_by_css_selector('div#main span')
                 for _ in lst:
@@ -128,7 +120,14 @@ def _save_status(c_id, status):
 def _fetch_contacts():
     session = get_session()
     try:
-        return session.query(Contacts).filter(Contacts.is_active==True).all()
+        return session.query(Contacts).filter(Contacts.is_active==True).order_by(Contacts.id.desc()).all()
+    finally:
+        session.close()
+
+def _get_wait_by_name(name):
+    session = get_session()
+    try:
+        return session.query(Waits).filter(Waits.name==name).limit(1).one().value
     finally:
         session.close()
 

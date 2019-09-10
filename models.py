@@ -65,3 +65,19 @@ class History(Base):
             contact_id=self.contact_id,
             )
 
+
+class Waits(Base):
+    
+    __tablename__ = 'woc_waits'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String())
+    value = Column(Integer)
+    
+    def __repr__(self):
+        return "<Waits(id={id}, name={name}, value={value})>".format(
+            id=self.id,
+            name=self.name,
+            value=self.value,
+            )
+
